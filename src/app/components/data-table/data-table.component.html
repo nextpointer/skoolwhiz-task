@@ -1,1 +1,61 @@
-<p>data-table works!</p>
+<div class="border rounded-lg overflow-hidden bg-white shadow-sm">
+  <div class="overflow-x-auto">
+    <table mat-table [dataSource]="patients()" class="w-full min-w-[1000px]">
+      <!-- Checkbox Column -->
+      <ng-container matColumnDef="select">
+        <th mat-header-cell *matHeaderCellDef class="w-12">
+          <mat-checkbox 
+            [checked]="allSelected()"
+            [indeterminate]="selection().size > 0 && !allSelected()"
+            (change)="toggleAll()">
+          </mat-checkbox>
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <mat-checkbox 
+            [checked]="selection().has(row.id!)"
+            (change)="toggleSelection(row.id!)">
+          </mat-checkbox>
+        </td>
+      </ng-container>
+
+      <!-- Data Columns -->
+      <ng-container *ngFor="let col of displayedColumns.slice(1, -1)" [matColumnDef]="col">
+        <th mat-header-cell *matHeaderCellDef class="whitespace-nowrap px-4 py-2">
+          {{ col | titlecase }}
+        </th>
+        <td mat-cell *matCellDef="let patient" class="px-4 py-2">
+          <ng-container [ngSwitch]="col">
+            <ng-container *ngSwitchCase="'picture'">
+              <img *ngIf="patient.picture" 
+                   [src]="patient.picture" 
+                   class="w-16 h-16 rounded object-cover border"
+                   alt="Patient photo">
+            </ng-container>
+            <span *ngSwitchDefault class="block truncate max-w-[200px]">
+              {{ patient[col] || '-' }}
+            </span>
+          </ng-container>
+        </td>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef class="w-32">Actions</th>
+        <td mat-cell *matCellDef="let patient" class="w-32 space-x-2">
+          <button mat-icon-button (click)="edit.emit(patient)">
+            <mat-icon class="text-blue-600">edit</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+
+  @if (patients().length === 0) {
+    <div class="p-8 text-center text-gray-500">
+      No patients found. Click "Add Patient" to get started.
+    </div>
+  }
+</div>

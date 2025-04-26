@@ -1,4 +1,56 @@
 @use "tailwindcss";
 
-html, body { @apply h-full bg-gray-50; }
-body { @apply m-0 font-sans; }
+:root {
+    --primary-color: #37352f;
+    --secondary-color: #ffffff;
+    --accent-color: #f5f5f5;
+  }
+  
+  body {
+    @apply bg-gray-50 font-sans;
+  }
+  
+  .mat-mdc-dialog-surface {
+    @apply rounded-xl shadow-xl;
+  }
+  
+  .mat-mdc-form-field {
+    @apply w-full;
+  }
+  
+  .mat-mdc-table {
+    @apply bg-white rounded-lg overflow-hidden;
+  }
+  
+  .mat-mdc-row:hover {
+    @apply bg-gray-50;
+  }
+
+
+
+  /* Add responsive table styling */
+@media (max-width: 768px) {
+    .mat-mdc-header-row {
+      display: none;
+    }
+    
+    .mat-mdc-row {
+      flex-direction: column;
+      border-bottom: 2px solid #eee;
+      padding: 1rem;
+    }
+  
+    .mat-mdc-cell {
+      width: 100% !important;
+      padding: 0.5rem 0;
+      border: none;
+    }
+  
+    .mat-mdc-cell:before {
+      content: attr(data-label);
+      float: left;
+      font-weight: 500;
+      margin-right: 1rem;
+      color: #666;
+    }
+  }

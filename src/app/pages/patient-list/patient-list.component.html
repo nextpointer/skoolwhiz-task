@@ -1,1 +1,28 @@
-<p>patient-list works!</p>
+<div class="p-6 max-w-6xl mx-auto">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-semibold text-gray-800">Patient Records</h1>
+    <div class="flex gap-2">
+      @if (selectedPatients().size > 0) {
+        <button mat-raised-button color="warn" (click)="deleteMultiple()">
+          Delete Selected ({{ selectedPatients().size }})
+        </button>
+      }
+      <button mat-raised-button color="primary" (click)="openForm()">
+        <span class="material-icons mr-2">add</span>
+        Add Patient
+      </button>
+    </div>
+  </div>
+
+  @if (patientService.loading()) {
+    <div class="p-8 text-center text-gray-500">
+      Loading...
+    </div>
+  } @else {
+    <app-data-table 
+      [patients]="patientService.patients()"
+      (edit)="openForm($event)"
+      (selectionChange)="selectedPatients.set($event)">
+    </app-data-table>
+  }
+</div>
