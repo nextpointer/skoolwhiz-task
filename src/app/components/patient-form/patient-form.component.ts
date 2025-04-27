@@ -1,5 +1,5 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule, AbstractControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { PatientService } from '../../services/patient.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -11,6 +11,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
+import { uniqueUidValidator } from '../../validators/uid.validator';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   standalone: true,
@@ -34,6 +36,7 @@ export class PatientFormComponent implements OnInit {
   private dialogRef = inject(MatDialogRef);
   private snackBar = inject(MatSnackBar);
   data: Patient | null = inject(MAT_DIALOG_DATA, { optional: true });
+  showUidValid = signal(false);
 
   bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
   isSubmitting = signal(false);
@@ -43,7 +46,10 @@ export class PatientFormComponent implements OnInit {
   form = this.fb.group({
     id: [null as number | null],
     name: ['', [Validators.required, Validators.maxLength(50)]],
-    uid: ['', [Validators.required, Validators.pattern(/^\d{11}$/)]],
+    uid: ['', 
+      [Validators.required, Validators.pattern(/^\d{11}$/)],
+      [this.uidValidator.bind(this)]
+    ],
     phone: ['', [Validators.required, Validators.pattern(/^\+?[1-9]\d{9,14}$/)]],
     address: [''],
     height: [null as number | null],
@@ -54,6 +60,12 @@ export class PatientFormComponent implements OnInit {
     allergies: [''],
     notes: ['']
   });
+  private uidValidator(control: AbstractControl) {
+    return uniqueUidValidator(this.patientService, this.data?.id)(control);
+  }
+  get uidControl() {
+    return this.form.get('uid');
+  }
 
   ngOnInit() {
     if (this.data) {
@@ -62,13 +74,31 @@ export class PatientFormComponent implements OnInit {
         id: this.data.id ?? null,
         height: this.data.height ?? null,
         weight: this.data.weight ?? null,
-        picture: this.data.picture ?? null
+        picture: this.data.picture ?? null,
+        uid: this.data.uid
       });
 
       if (this.data.picture) {
         this.imagePreview.set(this.data.picture);
       }
     }
+
+    this.uidControl?.statusChanges.subscribe(status => {
+      if (status === 'PENDING') {
+        this.uidControl?.setErrors(null);
+      }
+    });
+    
+    this.uidControl?.valueChanges.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(() => {
+      this.showUidValid.set(
+        !!this.uidControl?.valid && 
+        !this.uidControl?.pending &&
+        !this.uidControl?.hasError('uidExists')
+      );
+    });
   }
 
   async onSubmit() {
@@ -89,10 +119,10 @@ export class PatientFormComponent implements OnInit {
       }
 
       this.dialogRef.close(true);
-      this.snackBar.open('Patient Add successfully', 'Close', { duration: 3000 });
+      this.snackBar.open('Patient Update successfully', 'Close', { duration: 3000 });
     } catch (err) {
       console.error('Error saving patient:', err);
-      this.snackBar.open('Patient Add failed', 'Close', { duration: 3000 });
+      this.snackBar.open('Patient Update failed', 'Close', { duration: 3000 });
     } finally {
       this.isSubmitting.set(false);
     }

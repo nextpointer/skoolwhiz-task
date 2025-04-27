@@ -130,6 +130,7 @@ src/
 │   ├── pages/
 │   │   └── patient-list/    # Main application view
 │   ├── services/            # API service layer
+│   ├── validator/           # check UID uniqeness
 │   └── models/              # TypeScript interfaces
 ├── assets/                  # Static resources
 

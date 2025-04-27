@@ -63,3 +63,8 @@ button[disabled] {
 .form-changed {
   box-shadow: 0 0 0 2px #3b82f6;
 }
+
+.mat-mdc-form-field-icon-suffix {
+  align-self: center !important;
+  padding: 0 8px 0 0 !important;
+}

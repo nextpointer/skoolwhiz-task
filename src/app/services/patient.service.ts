@@ -2,8 +2,8 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Patient } from '../models/patient.model';
-import { catchError, tap } from 'rxjs/operators';
-import { Subject, throwError } from 'rxjs';
+import { catchError, map, tap } from 'rxjs/operators';
+import { Observable, of, Subject, throwError } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class PatientService {
@@ -94,5 +94,17 @@ export class PatientService {
     } finally {
       this.loading.set(false);
     }
+  }
+
+  checkUidUnique(uid: string, currentPatientId?: number): Observable<boolean> {
+    return this.http.get<Patient[]>(this.apiUrl, {
+      params: {
+        uid: uid,
+        id_ne: currentPatientId?.toString() || ''
+      }
+    }).pipe(
+      map(patients => patients.length === 0),
+      catchError(() => of(false))
+    );
   }
 }

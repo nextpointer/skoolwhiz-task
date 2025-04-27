@@ -20,12 +20,34 @@
 
             <!-- UID -->
             <mat-form-field class="w-full">
-                <input matInput placeholder="Unique ID (11 digits)" formControlName="uid" maxlength="11">
-                <mat-error *ngIf="form.get('uid')?.hasError('required')">
+                <input matInput placeholder="Unique ID (11 digits)" formControlName="uid"
+                    [attr.aria-busy]="uidControl?.pending">
+
+                <span matSuffix class="flex items-center gap-2 mr-2">
+                    @if (uidControl?.pending) {
+                    <mat-icon class="text-blue-500 animate-spin text-sm">autorenew</mat-icon>
+                    }
+                    @if (showUidValid()) {
+                    <mat-icon class="text-green-500">check_circle</mat-icon>
+                    }
+                </span>
+                <mat-hint align="start">
+                    @if (uidControl?.pending) {
+                    <span class="text-blue-500 flex items-center gap-2">
+                        <mat-icon class="animate-spin text-sm">autorenew</mat-icon>
+                        Checking availability...
+                    </span>
+                    }
+                </mat-hint>
+
+                <mat-error *ngIf="uidControl?.hasError('required')">
                     UID is required
                 </mat-error>
-                <mat-error *ngIf="form.get('uid')?.hasError('pattern')">
+                <mat-error *ngIf="uidControl?.hasError('pattern')">
                     Must be exactly 11 digits
+                </mat-error>
+                <mat-error *ngIf="uidControl?.hasError('uidExists')">
+                    UID already exists in system
                 </mat-error>
             </mat-form-field>
         </div>
@@ -113,13 +135,11 @@
         <!-- Action Buttons -->
         <div class="flex justify-end gap-2 pt-4">
             <button mat-button type="button" mat-dialog-close>Cancel</button>
-            <button mat-raised-button 
-                    color="primary" 
-                    type="submit"
-                    [disabled]="form.invalid || !hasUnsavedChanges() || isSubmitting()">
-              {{ data ? 'Save Changes' : 'Create Patient' }}
-              <mat-icon *ngIf="isSubmitting()" class="ml-2 animate-spin">autorenew</mat-icon>
+            <button mat-raised-button color="primary" type="submit"
+                [disabled]="form.invalid || !hasUnsavedChanges() || isSubmitting()">
+                {{ data ? 'Save Changes' : 'Save' }}
+                <mat-icon *ngIf="isSubmitting()" class="ml-2 animate-spin">autorenew</mat-icon>
             </button>
-          </div>
+        </div>
     </form>
 </div>
