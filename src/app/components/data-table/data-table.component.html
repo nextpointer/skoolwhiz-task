@@ -1,4 +1,4 @@
-<div class="border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+<div class="border border-gray-200 rounded-xl overflow-hidden shadow-sm">
   <div class="overflow-x-auto">
     <table mat-table [dataSource]="patients()" class="w-full min-w-[1000px]">
       <!-- Checkbox Column -->
@@ -8,14 +8,17 @@
             [checked]="allSelected()"
             [indeterminate]="selection().size > 0 && !allSelected()"
             (change)="toggleAll()"
-            class="opacity-0 group-hover:opacity-50 hover:opacity-100 transition-opacity duration-100">
+            class="opacity-50 hover:opacity-100 transition-opacity duration-150">
           </mat-checkbox>
         </th>
-        <td mat-cell *matCellDef="let row" class="group px-4 py-3 border-b border-gray-100 hover:bg-gray-50/50 transition-colors">
+        <td mat-cell *matCellDef="let row" 
+            class="px-4 py-3 border-b border-gray-100 transition-colors"
+            [class.bg-gray-100]="selection().has(row.id!)"
+            [class.hover:bg-gray-50]="!selection().has(row.id!)">
           <mat-checkbox 
             [checked]="selection().has(row.id!)"
             (change)="toggleSelection(row.id!)"
-            class="opacity-0 group-hover:opacity-50 hover:!opacity-100 transition-opacity duration-100">
+            class="opacity-50 checked:opacity-100 hover:opacity-100 transition-opacity duration-150">
           </mat-checkbox>
         </td>
       </ng-container>
@@ -25,12 +28,15 @@
         <th mat-header-cell *matHeaderCellDef class="whitespace-nowrap px-4 py-3 text-sm font-medium text-gray-600 bg-gray-50 border-b border-gray-100">
           {{ col | titlecase }}
         </th>
-        <td mat-cell *matCellDef="let patient" class="px-4 py-3 text-sm text-gray-700 border-b border-gray-100 group hover:bg-gray-50/50">
+        <td mat-cell *matCellDef="let patient" 
+            class="px-4 py-3 text-sm text-gray-700 border-b border-gray-100"
+            [class.bg-gray-100]="selection().has(patient.id!)"
+            [class.hover:bg-gray-50]="!selection().has(patient.id!)">
           <ng-container [ngSwitch]="col">
             <ng-container *ngSwitchCase="'picture'">
               <img *ngIf="patient.picture" 
                    [src]="patient.picture" 
-                   class="w-10 h-10 rounded object-cover border border-gray-200"
+                   class="w-10 h-10 rounded-lg object-cover border border-gray-200 shadow-sm"
                    alt="Patient photo">
             </ng-container>
             <span *ngSwitchDefault class="block truncate max-w-[200px]">
@@ -43,15 +49,18 @@
       <!-- Actions Column -->
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef class="w-24 px-4 py-3 text-sm font-medium text-gray-600 bg-gray-50 border-b border-gray-100">Actions</th>
-        <td mat-cell *matCellDef="let patient" class="w-24 px-4 py-3 text-gray-400 border-b border-gray-100 group hover:bg-gray-50/50">
-          <button mat-icon-button (click)="edit.emit(patient)" class="hover:text-gray-600 transition-colors">
-            <mat-icon>edit</mat-icon>
+        <td mat-cell *matCellDef="let patient" 
+            class="w-24 px-4 py-3 text-gray-400 border-b border-gray-100"
+            [class.bg-gray-100]="selection().has(patient.id!)"
+            [class.hover:bg-gray-50]="!selection().has(patient.id!)">
+          <button mat-icon-button (click)="edit.emit(patient)" class="hover:text-gray-700 transition-colors">
+            <mat-icon class="!w-5 !h-5">edit</mat-icon>
           </button>
         </td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns" class="bg-gray-50"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="group hover:bg-gray-50/50 transition-colors"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
   </div>
 

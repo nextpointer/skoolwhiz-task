@@ -3,20 +3,23 @@
     <h1 class="text-2xl font-semibold text-gray-800">Patient Records</h1>
     <div class="flex gap-2">
       @if (selectedPatients().size > 0) {
-        <button mat-raised-button color="warn" (click)="deleteMultiple()">
+        <button (click)="deleteMultiple()"
+                class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors
+                       border border-red-700 shadow-sm flex items-center gap-2">
           Delete Selected ({{ selectedPatients().size }})
         </button>
       }
-      <button mat-raised-button color="primary" (click)="openForm()">
-        <span class="material-icons mr-2">add</span>
+      <button (click)="openForm()"
+              class="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors
+                     border border-gray-700 shadow-sm flex items-center gap-2">
         Add Patient
       </button>
     </div>
   </div>
 
   @if (patientService.loading()) {
-    <div class="p-8 text-center text-gray-500">
-      Loading...
+    <div class="p-8 text-center text-gray-400">
+      <mat-spinner diameter="24" class="inline-block"></mat-spinner>
     </div>
   } @else {
     <app-data-table 

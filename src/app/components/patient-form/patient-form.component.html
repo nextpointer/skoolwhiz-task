@@ -1,145 +1,157 @@
-<h2 mat-dialog-title class="px-6 pt-6 text-lg font-semibold">
-    {{ data ? 'Edit Patient' : 'Add New Patient' }}
-</h2>
-
-<div mat-dialog-content>
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="px-6 space-y-4">
+<div class="border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
+    <h2 mat-dialog-title class="px-6 pt-6 text-lg font-medium text-gray-800">
+      {{ data ? 'Edit Patient' : 'Add New Patient' }}
+    </h2>
+  
+    <div mat-dialog-content>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="px-6 space-y-4">
         <!-- Row 1: Name and UID -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Name -->
-            <mat-form-field class="w-full">
-                <input matInput placeholder="Full Name" formControlName="name" maxlength="50">
-                <mat-hint align="end">{{ form.get('name')?.value?.length || 0 }}/50</mat-hint>
-                <mat-error *ngIf="form.get('name')?.hasError('required')">
-                    Name is required
-                </mat-error>
-                <mat-error *ngIf="form.get('name')?.hasError('maxlength')">
-                    Maximum 50 characters allowed
-                </mat-error>
-            </mat-form-field>
-
-            <!-- UID -->
-            <mat-form-field class="w-full">
-                <input matInput placeholder="Unique ID (11 digits)" formControlName="uid"
-                    [attr.aria-busy]="uidControl?.pending">
-
-                <span matSuffix class="flex items-center gap-2 mr-2">
-                    @if (uidControl?.pending) {
-                    <mat-icon class="text-blue-500 animate-spin text-sm">autorenew</mat-icon>
-                    }
-                    @if (showUidValid()) {
-                    <mat-icon class="text-green-500">check_circle</mat-icon>
-                    }
-                </span>
-                <mat-hint align="start">
-                    @if (uidControl?.pending) {
-                    <span class="text-blue-500 flex items-center gap-2">
-                        <mat-icon class="animate-spin text-sm">autorenew</mat-icon>
-                        Checking availability...
-                    </span>
-                    }
-                </mat-hint>
-
-                <mat-error *ngIf="uidControl?.hasError('required')">
-                    UID is required
-                </mat-error>
-                <mat-error *ngIf="uidControl?.hasError('pattern')">
-                    Must be exactly 11 digits
-                </mat-error>
-                <mat-error *ngIf="uidControl?.hasError('uidExists')">
-                    UID already exists in system
-                </mat-error>
-            </mat-form-field>
+          <!-- Name -->
+          <mat-form-field class="w-full">
+            <input matInput placeholder="Full Name" formControlName="name" maxlength="50" class="bg-gray-50 rounded-lg">
+            <mat-hint align="end">{{ form.get('name')?.value?.length || 0 }}/50</mat-hint>
+            <mat-error *ngIf="form.get('name')?.hasError('required')">
+              Name is required
+            </mat-error>
+            <mat-error *ngIf="form.get('name')?.hasError('maxlength')">
+              Maximum 50 characters allowed
+            </mat-error>
+          </mat-form-field>
+  
+          <!-- UID -->
+          <mat-form-field class="w-full">
+            <input matInput placeholder="Unique ID (11 digits)" formControlName="uid" class="bg-gray-50 rounded-lg"
+              [attr.aria-busy]="uidControl?.pending">
+  
+            <span matSuffix class="flex items-center gap-2 mr-2">
+              @if (uidControl?.pending) {
+              <mat-icon class="text-blue-500 animate-spin text-sm">autorenew</mat-icon>
+              }
+              @if (showUidValid()) {
+              <mat-icon class="text-green-500">check_circle</mat-icon>
+              }
+            </span>
+            <mat-hint align="start">
+              @if (uidControl?.pending) {
+              <span class="text-blue-500 flex items-center gap-2">
+                Checking availability...
+              </span>
+              }
+            </mat-hint>
+  
+            <mat-error *ngIf="uidControl?.hasError('required')">
+              UID is required
+            </mat-error>
+            <mat-error *ngIf="uidControl?.hasError('pattern')">
+              Must be exactly 11 digits
+            </mat-error>
+            <mat-error *ngIf="uidControl?.hasError('uidExists')">
+              UID already exists in system
+            </mat-error>
+          </mat-form-field>
         </div>
-
+  
         <!-- Row 2: Phone and Emergency Contact -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Phone -->
-            <mat-form-field class="w-full">
-                <input matInput placeholder="Phone Number" formControlName="phone">
-                <mat-error *ngIf="form.get('phone')?.hasError('required')">
-                    Phone is required
-                </mat-error>
-                <mat-error *ngIf="form.get('phone')?.hasError('pattern')">
-                    Invalid phone number format
-                </mat-error>
-            </mat-form-field>
-
-            <!-- Emergency Contact -->
-            <mat-form-field class="w-full">
-                <input matInput placeholder="Emergency Contact" formControlName="emergencyContact">
-                <mat-error *ngIf="form.get('emergencyContact')?.hasError('required')">
-                    Emergency contact is required
-                </mat-error>
-                <mat-error *ngIf="form.get('emergencyContact')?.hasError('pattern')">
-                    Invalid phone number format
-                </mat-error>
-            </mat-form-field>
+          <!-- Phone -->
+          <mat-form-field class="w-full">
+            <input matInput placeholder="Phone Number" formControlName="phone" class="bg-gray-50 rounded-lg">
+            <mat-error *ngIf="form.get('phone')?.hasError('required')">
+              Phone is required
+            </mat-error>
+            <mat-error *ngIf="form.get('phone')?.hasError('pattern')">
+              Invalid phone number format
+            </mat-error>
+          </mat-form-field>
+  
+          <!-- Emergency Contact -->
+          <mat-form-field class="w-full">
+            <input matInput placeholder="Emergency Contact" formControlName="emergencyContact" class="bg-gray-50 rounded-lg">
+            <mat-error *ngIf="form.get('emergencyContact')?.hasError('required')">
+              Emergency contact is required
+            </mat-error>
+            <mat-error *ngIf="form.get('emergencyContact')?.hasError('pattern')">
+              Invalid phone number format
+            </mat-error>
+          </mat-form-field>
         </div>
-
+  
         <!-- Row 3: Address -->
         <mat-form-field class="w-full">
-            <textarea matInput placeholder="Address" formControlName="address" rows="2"></textarea>
+          <textarea matInput placeholder="Address" formControlName="address" rows="2" class="bg-gray-50 rounded-lg"></textarea>
         </mat-form-field>
-
+  
         <!-- Row 4: Height and Weight -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Height -->
-            <mat-form-field class="w-full">
-                <input matInput placeholder="Height (cm)" type="number" formControlName="height" min="0">
-                <span matSuffix>cm</span>
-            </mat-form-field>
-
-            <!-- Weight -->
-            <mat-form-field class="w-full">
-                <input matInput placeholder="Weight (kg)" type="number" formControlName="weight" min="0">
-                <span matSuffix>kg</span>
-            </mat-form-field>
+          <!-- Height -->
+          <mat-form-field class="w-full">
+            <input matInput placeholder="Height (cm)" type="number" formControlName="height" min="0" class="bg-gray-50 rounded-lg">
+            <span matSuffix>cm</span>
+          </mat-form-field>
+  
+          <!-- Weight -->
+          <mat-form-field class="w-full">
+            <input matInput placeholder="Weight (kg)" type="number" formControlName="weight" min="0" class="bg-gray-50 rounded-lg">
+            <span matSuffix>kg</span>
+          </mat-form-field>
         </div>
-
+  
         <!-- Row 5: Blood Group and Image Upload -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Blood Group -->
-            <mat-form-field class="w-full">
-                <mat-label>Blood Group</mat-label>
-                <mat-select formControlName="bloodGroup">
-                    <mat-option *ngFor="let group of bloodGroups" [value]="group">
-                        {{ group }}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-
-            <!-- Image Upload -->
-            <div class="space-y-2">
-                <label class="block text-sm font-medium text-gray-700">Patient Photo (JPEG, JPG, PNG)</label>
-                <input type="file" accept="image/jpeg, image/jpg, image/png" (change)="onFileSelect($event)">
-                @if (imagePreview()) {
-                <img [src]="imagePreview()" class="mt-2 w-32 h-32 object-cover rounded border">
-                }
-                @if (form.get('picture')?.hasError('invalidFileType')) {
-                <mat-error>Only JPG, JPEG, or PNG files allowed</mat-error>
-                }
-            </div>
+          <!-- Blood Group -->
+          <mat-form-field class="w-full">
+            <mat-label>Blood Group</mat-label>
+            <mat-select formControlName="bloodGroup" class="bg-gray-50 rounded-lg">
+              <mat-option *ngFor="let group of bloodGroups" [value]="group">
+                {{ group }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+  
+          <!-- Image Upload -->
+          <div class="space-y-2">
+            <label class="block text-sm font-medium text-gray-700">Patient Photo (JPEG, JPG, PNG)</label>
+            <input type="file" accept="image/jpeg, image/jpg, image/png" (change)="onFileSelect($event)" 
+                   class="block w-full text-sm text-gray-500
+                          file:mr-4 file:py-2 file:px-4
+                          file:rounded-lg file:border-0
+                          file:text-sm file:font-medium
+                          file:bg-gray-50 file:text-gray-700
+                          hover:file:bg-gray-100">
+            @if (imagePreview()) {
+            <img [src]="imagePreview()" class="mt-2 w-32 h-32 object-cover rounded-lg border border-gray-200">
+            }
+            @if (form.get('picture')?.hasError('invalidFileType')) {
+            <mat-error>Only JPG, JPEG, or PNG files allowed</mat-error>
+            }
+          </div>
         </div>
-
+  
         <!-- Row 6: Allergies/Medical History -->
         <mat-form-field class="w-full">
-            <textarea matInput placeholder="Allergies/Medical History" formControlName="allergies" rows="3"></textarea>
+          <textarea matInput placeholder="Allergies/Medical History" formControlName="allergies" rows="3" class="bg-gray-50 rounded-lg"></textarea>
         </mat-form-field>
-
+  
         <!-- Row 7: Notes/Comments -->
         <mat-form-field class="w-full">
-            <textarea matInput placeholder="Notes/Comments" formControlName="notes" rows="2"></textarea>
+          <textarea matInput placeholder="Notes/Comments" formControlName="notes" rows="2" class="bg-gray-50 rounded-lg"></textarea>
         </mat-form-field>
-
+  
         <!-- Action Buttons -->
-        <div class="flex justify-end gap-2 pt-4">
-            <button mat-button type="button" mat-dialog-close>Cancel</button>
-            <button mat-raised-button color="primary" type="submit"
-                [disabled]="form.invalid || !hasUnsavedChanges() || isSubmitting()">
-                {{ data ? 'Save Changes' : 'Save' }}
-                <mat-icon *ngIf="isSubmitting()" class="ml-2 animate-spin">autorenew</mat-icon>
-            </button>
+        <div class="flex justify-end gap-2 pt-4 pb-6">
+          <button mat-button type="button" mat-dialog-close 
+                  class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+            Cancel
+          </button>
+          <button mat-raised-button type="submit"
+                  [disabled]="form.invalid || !hasUnsavedChanges() || isSubmitting()"
+                  class="bg-gray-800 text-white hover:bg-gray-700 px-4 py-2 rounded-lg transition-colors
+                         disabled:bg-gray-300 disabled:text-gray-500 shadow-sm">
+            {{ data ? 'Save Changes' : 'Save' }}
+            <mat-icon *ngIf="isSubmitting()" class="ml-2 animate-spin">autorenew</mat-icon>
+          </button>
         </div>
-    </form>
-</div>
+      </form>
+    </div>
+  </div>

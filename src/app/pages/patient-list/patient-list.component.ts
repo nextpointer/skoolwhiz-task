@@ -7,12 +7,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { DataTableComponent } from '../../components/data-table/data-table.component';
 import { CommonModule } from '@angular/common';
 import { Patient } from '../../models/patient.model';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   standalone: true,
   selector: 'app-patient-list',
   templateUrl: './patient-list.component.html',
-  imports: [CommonModule, MatButtonModule, DataTableComponent]
+  imports: [CommonModule, MatButtonModule, DataTableComponent, MatProgressSpinnerModule]
 })
 export class PatientListComponent {
   patientService = inject(PatientService);
