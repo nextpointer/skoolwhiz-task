@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   selector: 'app-data-table',
   templateUrl: './data-table.component.html',
-  imports: [CommonModule, MatTableModule, MatCheckboxModule, MatIconModule]
+  imports: [CommonModule, MatTableModule, MatCheckboxModule, MatIconModule],
 })
 export class DataTableComponent {
   patients = input<Patient[]>([]);
@@ -17,15 +17,27 @@ export class DataTableComponent {
   selectionChange = output<Set<number>>(); // Changed to number
 
   displayedColumns = [
-    'select', 'name', 'uid', 'phone', 'address',
-    'height', 'weight', 'bloodGroup', 'emergencyContact',
-    'allergies', 'notes', 'picture', 'actions'
+    'select',
+    'name',
+    'uid',
+    'phone',
+    'address',
+    'height',
+    'weight',
+    'bloodGroup',
+    'emergencyContact',
+    'allergies',
+    'notes',
+    'picture',
+    'actions',
   ];
-  
+
   selection = signal<Set<number>>(new Set<number>()); // Changed to number
   allSelected = signal(false);
 
-  toggleSelection(id: number) { // Changed to number
+  toggleSelection(id: number) {
+    if (!id) return;
+
     const newSelection = new Set(this.selection());
     newSelection.has(id) ? newSelection.delete(id) : newSelection.add(id);
     this.selection.set(newSelection);
@@ -36,8 +48,12 @@ export class DataTableComponent {
   toggleAll() {
     const allSelected = !this.allSelected();
     this.allSelected.set(allSelected);
-    const newSelection = allSelected 
-      ? new Set(this.patients().map(p => p.id!).filter(Boolean))
+    const newSelection = allSelected
+      ? new Set(
+          this.patients()
+            .map((p) => p.id!)
+            .filter(Boolean)
+        )
       : new Set<number>();
     this.selection.set(newSelection);
     this.selectionChange.emit(newSelection);

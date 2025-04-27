@@ -75,22 +75,24 @@ export class PatientFormComponent implements OnInit {
     if (this.form.invalid) return;
 
     this.isSubmitting.set(true);
-    const formValue = this.form.getRawValue();
+    const formData = this.form.value;
 
     try {
       if (this.data?.id) {
-        // Update existing patient
-        await this.patientService.updatePatient({ ...formValue, id: this.data.id } as Patient);
+        // Ensure ID is preserved
+        const updateData = { ...formData, id: this.data.id };
+        await this.patientService.updatePatient(updateData as Patient);
       } else {
-        // Create new patient
-        await this.patientService.createPatient(formValue as Patient);
+        // Remove any existing ID for new entries
+        const { id, ...createData } = formData;
+        await this.patientService.createPatient(createData as Patient);
       }
 
       this.dialogRef.close(true);
-      this.snackBar.open('Operation successful', 'Close', { duration: 3000 });
-    } catch (error) {
-      console.error('Save error:', error);
-      this.snackBar.open('Operation failed', 'Close', { duration: 3000 });
+      this.snackBar.open('Patient Add successfully', 'Close', { duration: 3000 });
+    } catch (err) {
+      console.error('Error saving patient:', err);
+      this.snackBar.open('Patient Add failed', 'Close', { duration: 3000 });
     } finally {
       this.isSubmitting.set(false);
     }

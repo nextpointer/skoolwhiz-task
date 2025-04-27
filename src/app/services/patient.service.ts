@@ -36,59 +36,63 @@ export class PatientService {
       });
   }
 
-  createPatient(patient: Omit<Patient, 'id'>) {
+  async createPatient(patientData: Omit<Patient, 'id'>) {
     this.loading.set(true);
-    return this.http.post<Patient>(this.apiUrl, patient)
-      .pipe(
-        tap(newPatient => {
-          this.patients.set([...this.patients(), newPatient]);
-        }),
-        catchError(error => {
-          this.error.set('Failed to create patient');
-          return throwError(() => error);
-        })
-      )
-      .subscribe({
-        error: () => this.loading.set(false),
-        complete: () => this.loading.set(false)
-      });
+    try {
+      const created = await this.http.post<Patient>(this.apiUrl, patientData).toPromise();
+      if (created) {
+        this.patients$.next([...this.patients(), created]);
+      }
+      return created;
+    } catch (err) {
+      this.error.set('Failed to Add patient');
+      throw err;
+    } finally {
+      this.loading.set(false);
+    }
   }
 
-  updatePatient(patient: Patient) {
+  async updatePatient(patient: Patient) {
+    if (!patient.id) {
+      throw new Error('Cannot update patient without ID');
+    }
+    
     this.loading.set(true);
-    return this.http.put<Patient>(`${this.apiUrl}/${patient.id}`, patient)
-      .pipe(
-        tap(updatedPatient => {
-          this.patients.set(this.patients().map(p => 
-            p.id === patient.id ? updatedPatient : p
-          ));
-        }),
-        catchError(error => {
-          this.error.set('Failed to update patient');
-          return throwError(() => error);
-        })
-      )
-      .subscribe({
-        error: () => this.loading.set(false),
-        complete: () => this.loading.set(false)
-      });
+    try {
+      const updated = await this.http.put<Patient>(
+        `${this.apiUrl}/${patient.id}`, 
+        patient
+      ).toPromise();
+
+      if (updated) {
+        const updatedPatients = this.patients().map(p => 
+          p.id === patient.id ? updated : p
+        );
+        this.patients$.next(updatedPatients);
+      }
+      return updated;
+    } catch (err) {
+      this.error.set('Failed to update patient');
+      throw err;
+    } finally {
+      this.loading.set(false);
+    }
   }
 
-  deletePatient(id: number) {
+  async deletePatient(id: number) {
+    if (!id) {
+      throw new Error('Invalid ID for deletion');
+    }
+    
     this.loading.set(true);
-    return this.http.delete(`${this.apiUrl}/${id}`)
-      .pipe(
-        tap(() => {
-          this.patients.set(this.patients().filter(p => p.id !== id));
-        }),
-        catchError(error => {
-          this.error.set('Failed to delete patient');
-          return throwError(() => error);
-        })
-      )
-      .subscribe({
-        error: () => this.loading.set(false),
-        complete: () => this.loading.set(false)
-      });
+    try {
+      await this.http.delete(`${this.apiUrl}/${id}`).toPromise();
+      this.patients$.next(this.patients().filter(p => p.id !== id));
+    } catch (err) {
+      this.error.set('Failed to delete patient');
+      throw err;
+    } finally {
+      this.loading.set(false);
+    }
   }
 }

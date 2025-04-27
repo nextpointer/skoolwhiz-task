@@ -26,7 +26,7 @@ export class PatientListComponent {
       await Promise.all(ids.map(id => this.patientService.deletePatient(id)));
       this.selectedPatients.set(new Set());
       this.snackBar.open(`Deleted ${ids.length} patients`, 'Close', { duration: 3000 });
-      this.patientService.loadPatients();
+      await this.patientService.loadPatients();
     } catch {
       this.snackBar.open('Failed to delete selected patients', 'Close', { duration: 3000 });
     }
