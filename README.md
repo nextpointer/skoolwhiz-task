@@ -84,7 +84,7 @@ or
 npm install
 ```
 
-**3. Development server 🌐**
+**3. Development server**
 
 Run the application:
 ```
@@ -97,11 +97,21 @@ npm start
 
 Open your browser and navigate to http://localhost:4200/.
 
-**4. Start JSON server**
+**4. API URL Environment setup**
+
+create a file "_environment.ts_" under environment.ts folder ( same as environment.sample.ts file)
+```
+export const environment = {
+    production: false,
+    apiUrl: 'http://localhost:3000'
+  };
+```
+
+**5. Start JSON server**
 ```
 bun json-server --watch db.json --port 3000
 ```
-**5. Building 🏗️**
+**6. Building**
 
 To build the project run:
 ```
@@ -170,3 +180,6 @@ Angular Team - Modern framework features
 Tailwind Labs - CSS utility innovations
 
 JSON Server - Mock API simplicity
+
+
+## Happy Coding :)
