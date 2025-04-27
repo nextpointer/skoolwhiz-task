@@ -119,10 +119,10 @@ export class PatientFormComponent implements OnInit {
       }
 
       this.dialogRef.close(true);
-      this.snackBar.open('Patient Update successfully', 'Close', { duration: 3000 });
+      this.snackBar.open('Operation successfully', 'Close', { duration: 3000 });
     } catch (err) {
       console.error('Error saving patient:', err);
-      this.snackBar.open('Patient Update failed', 'Close', { duration: 3000 });
+      this.snackBar.open('Operationfailed', 'Close', { duration: 3000 });
     } finally {
       this.isSubmitting.set(false);
     }

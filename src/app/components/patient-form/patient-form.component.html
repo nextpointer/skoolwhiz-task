@@ -99,15 +99,15 @@
   
         <!-- Row 5: Blood Group and Image Upload -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <!-- Blood Group -->
-          <mat-form-field class="w-full">
-            <mat-label>Blood Group</mat-label>
-            <mat-select formControlName="bloodGroup" class="bg-gray-50 rounded-lg">
-              <mat-option *ngFor="let group of bloodGroups" [value]="group">
-                {{ group }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
+      <!-- Blood Group Dropdown -->
+      <mat-form-field class="w-full">
+        <mat-label class="text-gray-700">Blood Group</mat-label>
+        <mat-select formControlName="bloodGroup" class="bg-gray-50 rounded-lg">
+          <mat-option *ngFor="let group of bloodGroups" [value]="group" class="text-gray-800">
+            {{ group }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
   
           <!-- Image Upload -->
           <div class="space-y-2">
@@ -140,18 +140,20 @@
   
         <!-- Action Buttons -->
         <div class="flex justify-end gap-2 pt-4 pb-6">
-          <button mat-button type="button" mat-dialog-close 
-                  class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
-            Cancel
-          </button>
-          <button mat-raised-button type="submit"
-                  [disabled]="form.invalid || !hasUnsavedChanges() || isSubmitting()"
-                  class="bg-gray-800 text-white hover:bg-gray-700 px-4 py-2 rounded-lg transition-colors
-                         disabled:bg-gray-300 disabled:text-gray-500 shadow-sm">
-            {{ data ? 'Save Changes' : 'Save' }}
-            <mat-icon *ngIf="isSubmitting()" class="ml-2 animate-spin">autorenew</mat-icon>
-          </button>
-        </div>
-      </form>
+            <button mat-button type="button" mat-dialog-close 
+                    class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors
+                           border border-gray-300">
+              Cancel
+            </button>
+            <button mat-raised-button type="submit"
+                    [disabled]="form.invalid || !hasUnsavedChanges() || isSubmitting()"
+                    class="bg-gray-800 text-white hover:bg-gray-700 px-4 py-2 rounded-lg transition-colors
+                           disabled:bg-gray-200 disabled:text-gray-400 shadow-sm hover:shadow-md
+                           border border-gray-700">
+              {{ data ? 'Save Changes' : 'Save' }}
+              <mat-icon *ngIf="isSubmitting()" class="ml-2 animate-spin">autorenew</mat-icon>
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
-  </div>

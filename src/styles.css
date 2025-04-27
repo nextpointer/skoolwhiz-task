@@ -23,9 +23,9 @@
 /* Checkbox Styling */
 .mat-mdc-checkbox {
   --mdc-checkbox-unselected-icon-color: #cbd5e1 !important;
-  --mdc-checkbox-selected-icon-color: #1e293b !important;
-  --mdc-checkbox-selected-focus-icon-color: #1e293b !important;
-  --mdc-checkbox-selected-hover-icon-color: #1e293b !important;
+  --mdc-checkbox-selected-icon-color: #bfbfbf !important;
+  --mdc-checkbox-selected-focus-icon-color: #dddddd !important;
+  --mdc-checkbox-selected-hover-icon-color: #bababa !important;
 }
 
 .mat-mdc-checkbox .mdc-checkbox__background {
@@ -115,4 +115,47 @@ button:not(.mat-icon-button) {
 /* Disabled States */
 button:disabled {
   @apply opacity-70 bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed;
+}
+
+/* Error message styling */
+.mat-mdc-form-field-error {
+  color: #ec4f4f !important; /* Slightly brighter red */
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+}
+
+/* Dropdown panel styling */
+.mat-mdc-select-panel {
+  background-color: white !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+}
+
+.mat-mdc-option {
+  padding: 8px 16px !important;
+}
+
+.mat-mdc-option:hover:not(.mdc-list-item--disabled),
+.mat-mdc-option:focus:not(.mdc-list-item--disabled) {
+  background-color: #f3f4f6 !important;
+}
+
+.mat-mdc-option.mdc-list-item--selected:not(.mat-mdc-option-multiple) {
+  background-color: #f3f4f6 !important;
+  font-weight: 500 !important;
+}
+
+/* Button enhancements */
+.mat-mdc-raised-button:not([disabled]) {
+  transition: all 0.2s ease !important;
+}
+
+.mat-mdc-raised-button:hover:not([disabled]) {
+  transform: translateY(-1px) !important;
+}
+
+/* Form field focus states */
+.mdc-text-field--outlined:not(.mdc-text-field--disabled).mdc-text-field--focused .mdc-notched-outline__notch {
+  border-color: #4b5563 !important;
 }
