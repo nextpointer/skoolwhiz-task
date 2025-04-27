@@ -99,11 +99,11 @@ Open your browser and navigate to http://localhost:4200/.
 
 **4. API URL Environment setup**
 
-create a file "_environment.ts_" under environment.ts folder ( same as environment.sample.ts file)
+configure "_environment.ts_" under environment.ts folder 
 ```
 export const environment = {
     production: false,
-    apiUrl: 'http://localhost:3000'
+    apiUrl: 'API_URL'
   };
 ```
 
