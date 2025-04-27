@@ -3,7 +3,7 @@
 </h2>
 
 <div mat-dialog-content>
-    <form [formGroup]="form" class="px-6 space-y-4">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="px-6 space-y-4">
         <!-- Row 1: Name and UID -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <!-- Name -->
@@ -92,10 +92,10 @@
                 <label class="block text-sm font-medium text-gray-700">Patient Photo (JPEG, JPG, PNG)</label>
                 <input type="file" accept="image/jpeg, image/jpg, image/png" (change)="onFileSelect($event)">
                 @if (imagePreview()) {
-                    <img [src]="imagePreview()" class="mt-2 w-32 h-32 object-cover rounded border">
+                <img [src]="imagePreview()" class="mt-2 w-32 h-32 object-cover rounded border">
                 }
                 @if (form.get('picture')?.hasError('invalidFileType')) {
-                    <mat-error>Only JPG, JPEG, or PNG files allowed</mat-error>
+                <mat-error>Only JPG, JPEG, or PNG files allowed</mat-error>
                 }
             </div>
         </div>
@@ -112,20 +112,14 @@
 
         <!-- Action Buttons -->
         <div class="flex justify-end gap-2 pt-4">
-            <button mat-button mat-dialog-close type="button">Cancel</button>
-            <button 
-                mat-raised-button 
-                color="primary" 
-                type="submit"
-                [disabled]="form.invalid || isSubmitting()" 
-                (click)="onSubmit()">
-                {{ data ? 'Save Changes' : 'Create Patient' }}
-                @if (isSubmitting()) {
-                    <span class="ml-2">
-                        <mat-spinner diameter="20" color="accent"></mat-spinner>
-                    </span>
-                }
+            <button mat-button type="button" mat-dialog-close>Cancel</button>
+            <button mat-raised-button 
+                    color="primary" 
+                    type="submit"
+                    [disabled]="form.invalid || !hasUnsavedChanges() || isSubmitting()">
+              {{ data ? 'Save Changes' : 'Create Patient' }}
+              <mat-icon *ngIf="isSubmitting()" class="ml-2 animate-spin">autorenew</mat-icon>
             </button>
-        </div>
+          </div>
     </form>
 </div>

@@ -2,8 +2,8 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Patient } from '../models/patient.model';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { catchError, tap, Subject, of } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
+import { Subject, throwError } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class PatientService {
@@ -11,62 +11,84 @@ export class PatientService {
   private apiUrl = `${environment.apiUrl}/patients`;
   private patients$ = new Subject<Patient[]>();
 
-  patients = toSignal(this.patients$.asObservable(), { initialValue: [] });
+  patients = signal<Patient[]>([]);
   loading = signal(false);
   error = signal<string | null>(null);
 
-  constructor() { this.loadPatients(); }
-
-  async loadPatients() {
-    this.loading.set(true);
-    try {
-      const patients = await this.http.get<Patient[]>(this.apiUrl).toPromise();
-      this.patients$.next(patients || []);
-    } catch (err) {
-      this.error.set('Failed to load patients');
-    } finally {
-      this.loading.set(false);
-    }
+  constructor() {
+    this.loadPatients();
   }
 
-  async createPatient(patient: Patient) {
+  loadPatients() {
     this.loading.set(true);
-    try {
-      const created = await this.http.post<Patient>(this.apiUrl, patient).toPromise();
-      this.patients$.next([...this.patients(), created!]);
-      return created;
-    } catch (err) {
-      this.error.set('Failed to create patient');
-      throw err;
-    } finally {
-      this.loading.set(false);
-    }
+    this.http.get<Patient[]>(this.apiUrl)
+      .pipe(
+        tap(data => this.patients$.next(data)),
+        catchError(error => {
+          this.error.set('Failed to load patients');
+          return throwError(() => error);
+        })
+      )
+      .subscribe({
+        next: (data) => this.patients.set(data),
+        error: () => this.loading.set(false),
+        complete: () => this.loading.set(false)
+      });
   }
 
-  async updatePatient(patient: Patient) {
+  createPatient(patient: Omit<Patient, 'id'>) {
     this.loading.set(true);
-    try {
-      const updated = await this.http.put<Patient>(`${this.apiUrl}/${patient.id}`, patient).toPromise();
-      this.patients$.next(this.patients().map(p => p.id === patient.id ? updated! : p));
-      return updated;
-    } catch (err) {
-      this.error.set('Failed to update patient');
-      throw err;
-    } finally {
-      this.loading.set(false);
-    }
+    return this.http.post<Patient>(this.apiUrl, patient)
+      .pipe(
+        tap(newPatient => {
+          this.patients.set([...this.patients(), newPatient]);
+        }),
+        catchError(error => {
+          this.error.set('Failed to create patient');
+          return throwError(() => error);
+        })
+      )
+      .subscribe({
+        error: () => this.loading.set(false),
+        complete: () => this.loading.set(false)
+      });
   }
 
-  async deletePatient(id: string) {
+  updatePatient(patient: Patient) {
     this.loading.set(true);
-    try {
-      await this.http.delete(`${this.apiUrl}/${id}`).toPromise();
-      this.patients$.next(this.patients().filter(p => p.id !== id));
-    } catch (err) {
-      this.error.set('Failed to delete patient');
-      throw err;
-    } finally {
-      this.loading.set(false);
-    }
+    return this.http.put<Patient>(`${this.apiUrl}/${patient.id}`, patient)
+      .pipe(
+        tap(updatedPatient => {
+          this.patients.set(this.patients().map(p => 
+            p.id === patient.id ? updatedPatient : p
+          ));
+        }),
+        catchError(error => {
+          this.error.set('Failed to update patient');
+          return throwError(() => error);
+        })
+      )
+      .subscribe({
+        error: () => this.loading.set(false),
+        complete: () => this.loading.set(false)
+      });
+  }
+
+  deletePatient(id: number) {
+    this.loading.set(true);
+    return this.http.delete(`${this.apiUrl}/${id}`)
+      .pipe(
+        tap(() => {
+          this.patients.set(this.patients().filter(p => p.id !== id));
+        }),
+        catchError(error => {
+          this.error.set('Failed to delete patient');
+          return throwError(() => error);
+        })
+      )
+      .subscribe({
+        error: () => this.loading.set(false),
+        complete: () => this.loading.set(false)
+      });
   }
 }

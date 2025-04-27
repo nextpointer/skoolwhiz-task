@@ -18,7 +18,7 @@ export class PatientListComponent {
   patientService = inject(PatientService);
   dialog = inject(MatDialog);
   snackBar = inject(MatSnackBar);
-  selectedPatients = signal<Set<string>>(new Set());
+  selectedPatients = signal<Set<number>>(new Set());
 
   async deleteMultiple() {
     const ids = Array.from(this.selectedPatients());

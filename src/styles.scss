@@ -1,56 +1,65 @@
 @use "tailwindcss";
 
 :root {
-    --primary-color: #37352f;
-    --secondary-color: #ffffff;
-    --accent-color: #f5f5f5;
-  }
-  
-  body {
-    @apply bg-gray-50 font-sans;
-  }
-  
-  .mat-mdc-dialog-surface {
-    @apply rounded-xl shadow-xl;
-  }
-  
-  .mat-mdc-form-field {
-    @apply w-full;
-  }
-  
-  .mat-mdc-table {
-    @apply bg-white rounded-lg overflow-hidden;
-  }
-  
-  .mat-mdc-row:hover {
-    @apply bg-gray-50;
-  }
+  --primary-color: #37352f;
+  --secondary-color: #ffffff;
+  --accent-color: #f5f5f5;
+}
 
+body {
+  @apply bg-gray-50 font-sans;
+}
 
+.mat-mdc-dialog-surface {
+  @apply rounded-xl shadow-xl;
+}
 
-  /* Add responsive table styling */
+.mat-mdc-form-field {
+  @apply w-full;
+}
+
+.mat-mdc-table {
+  @apply bg-white rounded-lg overflow-hidden;
+}
+
+.mat-mdc-row:hover {
+  @apply bg-gray-50;
+}
+
+/* Add responsive table styling */
 @media (max-width: 768px) {
-    .mat-mdc-header-row {
-      display: none;
-    }
-    
-    .mat-mdc-row {
-      flex-direction: column;
-      border-bottom: 2px solid #eee;
-      padding: 1rem;
-    }
-  
-    .mat-mdc-cell {
-      width: 100% !important;
-      padding: 0.5rem 0;
-      border: none;
-    }
-  
-    .mat-mdc-cell:before {
-      content: attr(data-label);
-      float: left;
-      font-weight: 500;
-      margin-right: 1rem;
-      color: #666;
-    }
+  .mat-mdc-header-row {
+    display: none;
   }
+
+  .mat-mdc-row {
+    flex-direction: column;
+    border-bottom: 2px solid #eee;
+    padding: 1rem;
+  }
+
+  .mat-mdc-cell {
+    width: 100% !important;
+    padding: 0.5rem 0;
+    border: none;
+  }
+
+  .mat-mdc-cell:before {
+    content: attr(data-label);
+    float: left;
+    font-weight: 500;
+    margin-right: 1rem;
+    color: #666;
+  }
+}
+
+/* Disabled state styling */
+button[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Form change indicator */
+.form-changed {
+  box-shadow: 0 0 0 2px #3b82f6;
+}

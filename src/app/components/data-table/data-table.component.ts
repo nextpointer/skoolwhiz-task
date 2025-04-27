@@ -14,7 +14,7 @@ import { CommonModule } from '@angular/common';
 export class DataTableComponent {
   patients = input<Patient[]>([]);
   edit = output<Patient>();
-  selectionChange = output<Set<string>>();
+  selectionChange = output<Set<number>>(); // Changed to number
 
   displayedColumns = [
     'select', 'name', 'uid', 'phone', 'address',
@@ -22,10 +22,10 @@ export class DataTableComponent {
     'allergies', 'notes', 'picture', 'actions'
   ];
   
-  selection = signal<Set<string>>(new Set<string>());
+  selection = signal<Set<number>>(new Set<number>()); // Changed to number
   allSelected = signal(false);
 
-  toggleSelection(id: string) {
+  toggleSelection(id: number) { // Changed to number
     const newSelection = new Set(this.selection());
     newSelection.has(id) ? newSelection.delete(id) : newSelection.add(id);
     this.selection.set(newSelection);
@@ -38,7 +38,7 @@ export class DataTableComponent {
     this.allSelected.set(allSelected);
     const newSelection = allSelected 
       ? new Set(this.patients().map(p => p.id!).filter(Boolean))
-      : new Set<string>();
+      : new Set<number>();
     this.selection.set(newSelection);
     this.selectionChange.emit(newSelection);
   }

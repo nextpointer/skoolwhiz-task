@@ -1,6 +1,6 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { PatientService } from '../../services/patient.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Patient } from '../../models/patient.model';
@@ -10,6 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   standalone: true,
@@ -22,8 +23,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatInputModule,
     MatButtonModule,
     MatSelectModule,
-    MatProgressSpinnerModule
-  ]
+    MatProgressSpinnerModule,
+    MatIconModule,
+    MatDialogModule
+  ],
 })
 export class PatientFormComponent implements OnInit {
   private fb = inject(FormBuilder);
@@ -38,7 +41,7 @@ export class PatientFormComponent implements OnInit {
   allowedImageTypes = ['image/jpeg', 'image/jpg', 'image/png'];
 
   form = this.fb.group({
-    id: [''],
+    id: [null as number | null],
     name: ['', [Validators.required, Validators.maxLength(50)]],
     uid: ['', [Validators.required, Validators.pattern(/^\d{11}$/)]],
     phone: ['', [Validators.required, Validators.pattern(/^\+?[1-9]\d{9,14}$/)]],
@@ -56,45 +59,61 @@ export class PatientFormComponent implements OnInit {
     if (this.data) {
       this.form.patchValue({
         ...this.data,
+        id: this.data.id ?? null,
         height: this.data.height ?? null,
         weight: this.data.weight ?? null,
         picture: this.data.picture ?? null
       });
-      if (this.data.picture) this.imagePreview.set(this.data.picture);
+
+      if (this.data.picture) {
+        this.imagePreview.set(this.data.picture);
+      }
+    }
+  }
+
+  async onSubmit() {
+    if (this.form.invalid) return;
+
+    this.isSubmitting.set(true);
+    const formValue = this.form.getRawValue();
+
+    try {
+      if (this.data?.id) {
+        // Update existing patient
+        await this.patientService.updatePatient({ ...formValue, id: this.data.id } as Patient);
+      } else {
+        // Create new patient
+        await this.patientService.createPatient(formValue as Patient);
+      }
+
+      this.dialogRef.close(true);
+      this.snackBar.open('Operation successful', 'Close', { duration: 3000 });
+    } catch (error) {
+      console.error('Save error:', error);
+      this.snackBar.open('Operation failed', 'Close', { duration: 3000 });
+    } finally {
+      this.isSubmitting.set(false);
     }
   }
 
   onFileSelect(event: Event) {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
-    
+
     if (file && this.allowedImageTypes.includes(file.type)) {
       const reader = new FileReader();
       reader.onload = () => {
         this.imagePreview.set(reader.result as string);
         this.form.patchValue({ picture: reader.result as string });
+        this.form.markAsDirty();
       };
       reader.readAsDataURL(file);
+    } else if (file) {
+      this.form.get('picture')?.setErrors({ invalidFileType: true });
     }
   }
 
-  async onSubmit() {
-    if (this.form.invalid) return;
-    this.isSubmitting.set(true);
-
-    try {
-      const formValue = this.form.value as Patient;
-      if (formValue.id) {
-        await this.patientService.updatePatient(formValue);
-      } else {
-        await this.patientService.createPatient(formValue);
-      }
-      this.dialogRef.close(true);
-      this.snackBar.open('Operation successful', 'Close', { duration: 3000 });
-    } catch {
-      this.snackBar.open('Operation failed', 'Close', { duration: 3000 });
-    } finally {
-      this.isSubmitting.set(false);
-    }
+  hasUnsavedChanges(): boolean {
+    return this.form.dirty;
   }
 }
